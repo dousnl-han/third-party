@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/permission?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT%2B8
+    url: jdbc:mysql://localhost:3306/permission
     username: root
-    password:
+    password: 123456
     driver-class-name: com.mysql.jdbc.Driver
   jpa:
     show-sql: true
@@ -10,7 +10,7 @@ spring:
     store-type: redis
   redis:
     host: 127.0.0.1
-    password:
+    password: 123456
     port: 6379
 server:
   port: 8080
