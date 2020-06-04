@@ -1,0 +1,30 @@
+spring:
+  mvc:
+    view: 
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+  datasource:
+    driverClassName: com.mysql.jdbc.Driver
+    url : jdbc:mysql://localhost:3306/order-demo?useUnicode=true&characterEncoding=utf-8 
+    username : root
+    password : admin
+  mail:
+    host: smtp.qq.com
+    username: 1647402060@qq.com
+    password: 
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true    
+# Mybatis配置
+mybatis:
+  typeAliasesPackage: cn.itsource.model
+  mapperLocations: classpath:cn/itsource/dao/mapper/*.xml
+  #日志
+logging:
+   level:
+    cn:
+     itsource: DEBUG    
