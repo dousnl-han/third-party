@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.Date;
+import java.util.List;
 
 /**
  * TODO
@@ -18,11 +19,15 @@ public class Book {
 
     @Id
     private String id;
+    private String resourceId;
     private Integer price;
     private String name;
     private String info;
     private String publish;
     private Date createTime;
     private Date updateTime;
+    private Integer likeCount;
+    private boolean likeStatus;
+    private List<Integer> platforms;
 
 }

@@ -14,6 +14,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>dousnl-mongo</module>
+        <module>dousnl-es</module>
     </modules>
 
 

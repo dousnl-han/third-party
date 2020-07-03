@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -82,7 +83,7 @@ public class MongoDbService {
      * @return
      */
     public Book getBookById(String id) {
-        Query query = new Query(Criteria.where("_id").is(id));
+        Query query = new Query(Criteria.where("resourceId").is(id).and("platforms").in(Arrays.asList(1,2,3)));
         return mongoTemplate.findOne(query, Book.class);
     }
 
@@ -108,6 +109,7 @@ public class MongoDbService {
         Update update = new Update().set("publish", book.getPublish()).set("info", book.getInfo()).set("updateTime",
                 new Date());
         // updateFirst 更新查询返回结果集的第一条
+        update.inc("likeCount", 1);
         mongoTemplate.updateFirst(query, update, Book.class);
         // updateMulti 更新查询返回结果集的全部
         // mongoTemplate.updateMulti(query,update,Book.class);
