@@ -15,6 +15,7 @@
     <modules>
         <module>dousnl-mongo</module>
         <module>dousnl-es</module>
+        <module>dousn-redis</module>
     </modules>
 
 

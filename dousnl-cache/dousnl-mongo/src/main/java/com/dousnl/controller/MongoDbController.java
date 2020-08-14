@@ -41,6 +41,11 @@ public class MongoDbController {
         return mongoDbService.findAll();
     }
 
+    @GetMapping("/mongo/count")
+    public long count(@RequestParam(required = false)String name) {
+        return mongoDbService.count(name);
+    }
+
     @GetMapping("/mongo/findOne")
     public Book findOne(@RequestParam String id) {
         return mongoDbService.getBookById(id);

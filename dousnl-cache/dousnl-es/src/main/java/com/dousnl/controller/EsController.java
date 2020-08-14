@@ -2,6 +2,7 @@ package com.dousnl.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.dousnl.domain.EsIndexAndTypeParam;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -91,11 +93,16 @@ public class EsController {
         SearchResponse search = client.search(searchRequest, RequestOptions.DEFAULT);
         SearchHits hits = search.getHits();
         SearchHit[] hits1 = hits.getHits();
+        List<String> list= Lists.newArrayList();
         for (SearchHit hit:hits1){
             Map<String, Object> sourceAsMap = hit.getSourceAsMap();
-            log.info(">>>>>>sourceAsMap:{}",sourceAsMap);
+            //log.info(">>>>>>sourceAsMap:{}",sourceAsMap);
+            String sourceAsString = hit.getSourceAsString();
+            //log.info(">>>>>>sourceAsString:{}",sourceAsString);
+            list.add(sourceAsString);
         }
-        return "success";
+        log.info(list.toString());
+        return list.toString();
     }
 
     @PostMapping("/findterm")

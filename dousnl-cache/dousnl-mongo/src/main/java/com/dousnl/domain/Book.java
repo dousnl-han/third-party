@@ -27,6 +27,8 @@ public class Book {
     private Date createTime;
     private Date updateTime;
     private Integer likeCount;
+    private Integer dislikeCount;
+    private Integer likeNum;
     private boolean likeStatus;
     private List<Integer> platforms;
 
