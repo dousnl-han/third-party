@@ -22,7 +22,13 @@ public class JedisAdapter implements InitializingBean {
     private JedisPool jedisPool=null;
     @Override
     public void afterPropertiesSet() throws Exception {
-        jedisPool = new JedisPool(new GenericObjectPoolConfig(), "localhost", 6379, 2000, null, 8, null);
+        GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
+        poolConfig.setMinEvictableIdleTimeMillis(10);
+        poolConfig.setSoftMinEvictableIdleTimeMillis(10);
+        // 最大建立连接等待时间
+        poolConfig.setMaxWaitMillis(300);
+        poolConfig.setTestOnBorrow(true);
+        jedisPool = new JedisPool(poolConfig, "localhost", 6379, 2000, null, 8, null);
     }
 
     private Jedis getJedis(){

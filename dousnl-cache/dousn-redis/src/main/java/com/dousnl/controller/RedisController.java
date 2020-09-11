@@ -1,5 +1,6 @@
 package com.dousnl.controller;
 
+import com.dousnl.adapter.JedisAdapter;
 import com.dousnl.constant.EntityType;
 import com.dousnl.service.LikeService;
 import com.dousnl.service.NewsService;
@@ -24,6 +25,8 @@ public class RedisController {
     private NewsService newsService;
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private JedisAdapter jedisAdapter;
 
     @RequestMapping(path = {"/like"}, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -34,6 +37,13 @@ public class RedisController {
         //资讯上更新点赞数
         newsService.updateLikeCount(newsId, (int)likeCount);
         return ToutiaoUtil.getJSONString(0, String.valueOf(likeCount));
+    }
+
+    @RequestMapping(path = {"/set"}, method = {RequestMethod.GET, RequestMethod.POST})
+    @ResponseBody
+    public String set(@RequestParam("newsId") int newsId){
+        jedisAdapter.set("1",String.valueOf(newsId));
+        return "success";
     }
 
     @RequestMapping(path = {"/dislike"}, method = {RequestMethod.POST, RequestMethod.GET})
