@@ -1,7 +1,10 @@
 package com.dousnl.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.dousnl.domain.EsIndexAndTypeParam;
+import com.dousnl.domain.EsQueryParam;
+import com.dousnl.domain.User;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.get.GetRequest;
@@ -16,6 +19,7 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.index.get.GetResult;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.rest.RestStatus;
@@ -26,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -46,18 +52,26 @@ public class EsController {
     @Autowired
     private RestHighLevelClient client;
 
+    /**
+     * index:索引名
+     * type:表名
+     * @param param
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/addindex")
     public String addIndex(@RequestBody EsIndexAndTypeParam param) throws IOException {
-        Map<String, Object> jsonMap = new HashMap<>(2);
-        //System.out.println("before resize:"+jsonMap.size());
-        jsonMap.put("user", "laimailai");
+        JSONObject jsonMap = new JSONObject();
+
+        jsonMap.put("id", 1);
+        jsonMap.put("username", "laimailai");
         jsonMap.put("postDate", new Date());
-        //System.out.println("before2 resize:"+jsonMap.size());
         jsonMap.put("message", "trying out Elasticsearch");
-        //System.out.println("after resize:"+jsonMap.size());
-        long id = System.currentTimeMillis();
-        IndexRequest indexRequest = new IndexRequest(param.getIndex(), param.getType(), String.valueOf(id))
-                .source(jsonMap);
+        User build = new User("LI",19);
+        jsonMap.put("build", build);
+
+        IndexRequest indexRequest = new IndexRequest(param.getIndex(),param.getType())
+                .source(JSON.parseObject(jsonMap.toJSONString()));
         IndexResponse indexResponse = client.index(indexRequest, RequestOptions.DEFAULT);
         RestStatus status = indexResponse.status();
         return status.toString();
@@ -79,7 +93,15 @@ public class EsController {
         jsonMap.put("user", "laimailai");
         jsonMap.put("postDate", new Date());
         jsonMap.put("message", "trying out Elasticsearch update");
-        upadteRequest.doc(jsonMap);
+        User build = new User("LI",19);
+        jsonMap.put("build", build);
+        List<String> programs = new ArrayList<>();
+        programs.add("game");
+        programs.add("ccc");
+        jsonMap.put("pile", programs);
+
+
+        upadteRequest.doc(JSON.parseObject(JSON.toJSONString(jsonMap)));
         UpdateResponse update = client.update(upadteRequest, RequestOptions.DEFAULT);
         GetResult getResult = update.getGetResult();
         return JSON.toJSONString(getResult);
@@ -106,13 +128,15 @@ public class EsController {
     }
 
     @PostMapping("/findterm")
-    public String findTerm(@RequestBody EsIndexAndTypeParam param) throws IOException {
+    public String findTerm(@RequestBody EsQueryParam param) throws IOException {
         //根据多个条件搜索
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        //TermQueryBuilder termQueryBuilder=new TermQueryBuilder("_id",param.getId());
-        //boolQueryBuilder.should(termQueryBuilder);
-        TermQueryBuilder termQueryBuilder=new TermQueryBuilder("user",param.getType());
-        boolQueryBuilder.should(termQueryBuilder);
+
+
+        MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery(param.getKeyword(), "build.name",
+                "age", "subTitle", "pile");
+
+        boolQueryBuilder.should(multiMatchQueryBuilder);
 
         SearchRequest searchRequest = new SearchRequest(param.getIndex());
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
